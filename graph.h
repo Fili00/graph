@@ -44,7 +44,7 @@ namespace graph {
 
 // Calcola e ritorna il grado del nodo. Se fallisce (il nodo non esiste)
 // restituisce -1
-    int nodeDegree(Label, const Graph &);
+    int degree(Label, const Graph &);
 
 // Verifica se due vertici sono adiacenti (ovvero se esiste un arco)
     bool areAdjacent(Label, Label, const Graph &);
@@ -52,15 +52,10 @@ namespace graph {
 // Ritorna la lista di adiacenza di un vertice
     std::list<Label> adjacentList(Label, const Graph &);
 
-// Calcola, se esiste, un cammino tra due vertici
-    void findPath(Label, Label, listNS::List &, int &, const Graph &g);
-
 //Se esiste, cambia il label del nodo
     bool changeLabel(Label, Label, const Graph &g);
 
-    bool removeVertex(Label,  Graph &g);
-
-    listNS::List allEdge(const Graph &);
+    std::list<std::pair<Label, Label> > allEdge(const Graph& );
 }
 
 /* Funzioni che non caratterizzano il TDD Graph, ma che servono per input/output */

@@ -26,31 +26,6 @@ Graph getNode(const Label l, const Graph& g){
     return emptyGraph;
 }
 
-// Ritorna un cammino tra un nodo ed un altro
-// Il cammino da "v1" a "v2" alla fine sara' in "path"
-// e la lunghezza sara' in "len".
-// Si assume che il chiamante fornisca inizialmente un cammino vuoto.
-//
-// La funzione rappresenta una variante della visita DFS
-bool findPathAux(Label v2, listNS::List &path, int&len, const Graph& g){
-    if(isEmpty(g))
-        return false;
-    g -> visited = true;
-    if(g -> label == v2)
-        return true;
-    adjVertex tmp = g -> adjList;
-    while(tmp != emptyAdjVertex){
-        if(!(tmp -> vertexPtr -> visited) && findPathAux(v2, path, len, tmp -> vertexPtr)){
-            len += tmp -> weight;
-            listNS::addFront("", tmp -> vertexPtr -> label, path);
-
-            return true;
-        }
-        tmp = tmp -> next;
-    }
-    return false;
-}
-
 adjVertex createAdjVertex(Weight w, adjVertex adj, const Graph& to){
     adjVertex tmp = new halfEdgeVertex;
     tmp -> next = adj;
@@ -59,6 +34,14 @@ adjVertex createAdjVertex(Weight w, adjVertex adj, const Graph& to){
     return tmp;
 }
 
+int nodeDegree(Graph node){
+    if(isEmpty(node))
+        return -1;
+    int count = 0;
+    for(adjVertex tmp = node -> adjList; tmp != emptyAdjVertex; tmp = tmp -> next)
+        count++;
+    return count;
+}
 
 void setFalse(const Graph& g){
     Graph tmp = g;
@@ -96,7 +79,7 @@ bool graph::addVertex(Label l, Graph& g) {
 bool graph::addEdge(Label from, Label to, Weight w, const Graph& g) {
     Graph nodeFrom = getNode(from, g);
     Graph nodeTo = getNode(to, g);
-    if(isEmpty(nodeFrom) || isEmpty(nodeTo))
+    if(isEmpty(nodeFrom) || isEmpty(nodeTo) || areAdjacent(from, to, g))
         return false;
     nodeFrom -> adjList = createAdjVertex(w, nodeFrom -> adjList, nodeTo);
     return true;
@@ -129,14 +112,8 @@ int graph::numEdges(const Graph& g){
 
 // Calcola e ritorna il grado del nodo. Se fallisce (il nodo non esiste)
 // restituisce -1
-int graph::nodeDegree(Label l, const Graph& g) {
-    Graph node = getNode(l, g);
-    if(isEmpty(node))
-        return -1;
-    int count = 0;
-    for(adjVertex tmp = node -> adjList; tmp != emptyAdjVertex; tmp = tmp -> next)
-        count++;
-    return count;
+int graph::degree(Label l, const Graph& g) {
+    return nodeDegree(getNode(l, g));
 }
 
 // Verifica se esiste un arco da v1 a v2
@@ -152,12 +129,12 @@ bool graph::areAdjacent(Label v1, Label v2, const Graph& g) {
 
 // Restituisce la lista di adiacenza di un vertice
 std::list<Label> graph::adjacentList(Label v1, const Graph& g) {
-    std::list<Label> l = {};
+    std::list<Label> l;
     Graph tmpGraph = getNode(v1, g);
     if(isEmpty(tmpGraph))
-        return lst;
+        return l;
     for(adjVertex tmp = tmpGraph -> adjList; tmp != emptyAdjVertex; tmp = tmp -> next)
-        l.push_front(tmpAdj -> vertexPtr -> label);
+        l.push_front(tmp -> vertexPtr -> label);
     return l;
 }
 
@@ -170,10 +147,10 @@ bool graph::changeLabel(Label oldLabel, Label newLabel, const Graph &g) {
 }
 
 std::list<std::pair<Label, Label> > graph::allEdge(const Graph& g){
-    std::list<std::pair<Label, Label> > l = {};
-    for(Graph tmp = g; !isEmpty(tmp); tmp = tmp -> next){
+    std::list<std::pair<Label, Label> > l;
+    for(Graph tmp = g; !isEmpty(tmp); tmp = tmp -> next)
         for(adjVertex  adj = tmp -> adjList; adj != emptyAdjVertex; adj = adj -> next)
-            l.push_back(std::make_pair(tmpGraph -> label, tmpAdj -> vertexPtr -> label));
+            l.push_back(std::make_pair(tmp -> label, adj -> vertexPtr -> label));
     return l;
 }
 
