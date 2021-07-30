@@ -56,6 +56,10 @@ namespace graph {
     bool changeLabel(Label, Label, const Graph &g);
 
     std::list<std::pair<Label, Label> > allEdge(const Graph& );
+
+    bool removeEdge(Label, Label, const Graph&);
+
+    bool removeVertex(Label, Graph& );
 }
 
 /* Funzioni che non caratterizzano il TDD Graph, ma che servono per input/output */

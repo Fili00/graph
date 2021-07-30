@@ -25,5 +25,20 @@ int main(){
     cout<<graph::numVertices(g)<<" "<<graph::numEdges(g)<<endl;
     cout<<graph::degree("A",g)<<" "<<graph::degree("B",g)<<" "<<graph::degree("q",g)<<endl;
     cout<<graph::areAdjacent("A","B",g)<<" "<<graph::areAdjacent("B","A",g)<<" "<<graph::areAdjacent("Q","A",g)<<" "<<graph::areAdjacent("A","Q",g)<<endl;
+    graph::removeEdge("A","B",g);
+    graph::addEdge("A","B",1,g);
+    graph::removeEdge("A","Q",g);
+    graph::removeEdge("Q","A",g);
+    graph::removeEdge("A","C",g);
+    graph::removeEdge("A","B",g);
+    printGraph(g);
+    cout<<"---"<<endl;
+    cout<<graph::removeVertex("Q",g)<<" ";
+    cout<<graph::removeVertex("C",g)<<" ";
+    graph::addEdge("A","C",1,g);
+    cout<<graph::removeVertex("A",g)<<" ";
+    cout<<graph::removeVertex("D",g)<<endl;
+    printGraph(g);
+
     return 0;
 }

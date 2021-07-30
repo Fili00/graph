@@ -12,7 +12,6 @@ struct graph::vertexNode{
     Label label;
     halfEdgeVertex* adjList;
     vertexNode* next;
-    bool visited;
 };
 
 /*******************************************************************************************************/
@@ -43,14 +42,6 @@ int nodeDegree(Graph node){
     return count;
 }
 
-void setFalse(const Graph& g){
-    Graph tmp = g;
-    while(!isEmpty(tmp)){
-        tmp -> visited = false;
-        tmp = tmp -> next;
-    }
-}
-
 /*******************************************************************************************************/
 // Graph
 /*******************************************************************************************************/
@@ -68,7 +59,7 @@ bool graph::addVertex(Label l, Graph& g) {
     Graph tmp = new vertexNode;
     tmp -> label = l;
     tmp -> adjList = emptyAdjVertex;
-    tmp -> visited = false;
+//    tmp -> visited = false;
     tmp -> next = g;
     g = tmp;
     return true;
@@ -152,6 +143,56 @@ std::list<std::pair<Label, Label> > graph::allEdge(const Graph& g){
         for(adjVertex  adj = tmp -> adjList; adj != emptyAdjVertex; adj = adj -> next)
             l.push_back(std::make_pair(tmp -> label, adj -> vertexPtr -> label));
     return l;
+}
+//rimuove un arco
+bool graph::removeEdge(Label from, Label to, const Graph& g){
+    Graph tmp = getNode(from, g);
+    if(isEmpty(tmp))
+        return false;
+
+    if(tmp -> adjList != emptyAdjVertex && tmp -> adjList -> vertexPtr -> label == to){
+        tmp -> adjList = tmp -> adjList -> next;
+        return true;
+    }
+
+    adjVertex prev = tmp -> adjList;
+    adjVertex curr = tmp -> adjList -> next;
+    while(curr != emptyAdjVertex){
+        if(curr -> vertexPtr -> label == to){
+            prev -> next = curr -> next;
+            delete curr;
+            return true;
+        }
+        prev = curr;
+        curr = curr -> next;
+    }
+    return false;
+}
+
+bool graph::removeVertex(Label l, Graph& g){
+    for (auto const& i : allEdge(g)) {
+        if(i.first == l || i.second == l)
+            removeEdge(i.first, i.second, g);
+    }
+
+    if(g -> label == l) {
+        Graph tmp = g;
+        g = g->next;
+        delete tmp;
+        return true;
+    }
+    Graph prev = g;
+    Graph curr = g -> next;
+    while(!isEmpty(curr)){
+        if(curr -> label == l){
+            prev -> next = curr -> next;
+            delete curr;
+            return true;
+        }
+        prev = curr;
+        curr = curr -> next;
+    }
+    return false;
 }
 
 /*******************************************************************************************************/
